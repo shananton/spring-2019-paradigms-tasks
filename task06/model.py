@@ -88,7 +88,7 @@ class Number(ASTNode):
     """
 
     def accept(self, visitor: ASTNodeVisitor):
-        visitor.visit_number(self)
+        return visitor.visit_number(self)
 
     def __init__(self, value):
         self.value = value
@@ -114,7 +114,7 @@ class Function(ASTNode):
     """
 
     def accept(self, visitor: ASTNodeVisitor):
-        visitor.visit_function(self)
+        return visitor.visit_function(self)
 
     def __init__(self, args, body):
         self.args = args
@@ -134,7 +134,7 @@ class FunctionDefinition(ASTNode):
     """
 
     def accept(self, visitor: ASTNodeVisitor):
-        visitor.visit_function_definition(self)
+        return visitor.visit_function_definition(self)
 
     def __init__(self, name, function):
         self.name = name
@@ -160,7 +160,7 @@ class Conditional(ASTNode):
     """
 
     def accept(self, visitor: ASTNodeVisitor):
-        visitor.visit_conditional(self)
+        return visitor.visit_conditional(self)
 
     def __init__(self, condition, if_true, if_false=None):
         self.condition = condition
@@ -189,7 +189,7 @@ class Print(ASTNode):
     """
 
     def accept(self, visitor: ASTNodeVisitor):
-        visitor.visit_print(self)
+        return visitor.visit_print(self)
 
     def __init__(self, expr):
         self.expr = expr
@@ -212,7 +212,7 @@ class Read(ASTNode):
     """
 
     def accept(self, visitor: ASTNodeVisitor):
-        visitor.visit_read(self)
+        return visitor.visit_read(self)
 
     def __init__(self, name):
         self.name = name
@@ -245,7 +245,7 @@ class FunctionCall(ASTNode):
     """
 
     def accept(self, visitor: ASTNodeVisitor):
-        visitor.visit_function_call(self)
+        return visitor.visit_function_call(self)
 
     def __init__(self, fun_expr, args):
         self.fun_expr = fun_expr
@@ -270,7 +270,7 @@ class Reference(ASTNode):
     """
 
     def accept(self, visitor: ASTNodeVisitor):
-        visitor.visit_reference(self)
+        return visitor.visit_reference(self)
 
     def __init__(self, name):
         self.name = name
@@ -298,7 +298,7 @@ class BinaryOperation(ASTNode):
     """
 
     def accept(self, visitor: ASTNodeVisitor):
-        visitor.visit_binary_operation(self)
+        return visitor.visit_binary_operation(self)
 
     OP_TO_FUN = {'+': lambda a, b: a + b,
                  '-': lambda a, b: a - b,
@@ -340,7 +340,7 @@ class UnaryOperation(ASTNode):
     """
 
     def accept(self, visitor: ASTNodeVisitor):
-        visitor.visit_unary_operation(self)
+        return visitor.visit_unary_operation(self)
 
     OP_TO_FUN = {'-': lambda a: -a,
                  '!': lambda a: not a}
