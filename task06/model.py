@@ -19,12 +19,60 @@ class Scope:
         self.var_dict[key] = value
 
 
+class ASTNodeVisitor(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    def visit_number(self, node):
+        pass
+
+    @abc.abstractmethod
+    def visit_function(self, node):
+        pass
+
+    @abc.abstractmethod
+    def visit_function_definition(self, node):
+        pass
+
+    @abc.abstractmethod
+    def visit_conditional(self, node):
+        pass
+
+    @abc.abstractmethod
+    def visit_print(self, node):
+        pass
+
+    @abc.abstractmethod
+    def visit_read(self, node):
+        pass
+
+    @abc.abstractmethod
+    def visit_function_call(self, node):
+        pass
+
+    @abc.abstractmethod
+    def visit_reference(self, node):
+        pass
+
+    @abc.abstractmethod
+    def visit_binary_operation(self, node):
+        pass
+
+    @abc.abstractmethod
+    def visit_unary_operation(self, node):
+        pass
+
+
 class ASTNode(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def evaluate(self, scope):
         """
         Запускает вычисление текущего узла синтаксического дерева
         в заданной области видимости и возвращает результат вычисления.
+        """
+
+    @abc.abstractmethod
+    def accept(self, visitor: ASTNodeVisitor):
+        """
+        Вызывает соответствующий метод visit_<type>(self) у посетителя.
         """
 
 
@@ -38,6 +86,9 @@ class Number(ASTNode):
     быть можно положить в словарь в качестве ключа (см. специальные методы
     __eq__, __ne__, __hash__ — требуется реализовать две из них).
     """
+
+    def accept(self, visitor: ASTNodeVisitor):
+        visitor.visit_number(self)
 
     def __init__(self, value):
         self.value = value
@@ -62,6 +113,9 @@ class Function(ASTNode):
     Аналогично Number, метод evaluate должен возвращать self.
     """
 
+    def accept(self, visitor: ASTNodeVisitor):
+        visitor.visit_function(self)
+
     def __init__(self, args, body):
         self.args = args
         self.body = body
@@ -78,6 +132,9 @@ class FunctionDefinition(ASTNode):
     обновление текущего Scope,  т.е. в него добавляется новое значение типа
     Function под заданным именем, а возвращать evaluate должен саму функцию.
     """
+
+    def accept(self, visitor: ASTNodeVisitor):
+        visitor.visit_function_definition(self)
 
     def __init__(self, name, function):
         self.name = name
@@ -101,6 +158,9 @@ class Conditional(ASTNode):
     Если соответствующий список пуст или равен None, то возвращаемое значение
     остается на ваше усмотрение.
     """
+
+    def accept(self, visitor: ASTNodeVisitor):
+        visitor.visit_conditional(self)
 
     def __init__(self, condition, if_true, if_false=None):
         self.condition = condition
@@ -128,6 +188,9 @@ class Print(ASTNode):
     выведен.
     """
 
+    def accept(self, visitor: ASTNodeVisitor):
+        visitor.visit_print(self)
+
     def __init__(self, expr):
         self.expr = expr
 
@@ -147,6 +210,9 @@ class Read(ASTNode):
     Каждое входное число располагается на отдельной строке (никаких пустых
     строк и лишних символов не будет).
     """
+
+    def accept(self, visitor: ASTNodeVisitor):
+        visitor.visit_read(self)
 
     def __init__(self, name):
         self.name = name
@@ -178,6 +244,9 @@ class FunctionCall(ASTNode):
     неопределён, то возвращаемое значение остаётся на ваше усмотрение.
     """
 
+    def accept(self, visitor: ASTNodeVisitor):
+        visitor.visit_function_call(self)
+
     def __init__(self, fun_expr, args):
         self.fun_expr = fun_expr
         self.args = args
@@ -199,6 +268,9 @@ class Reference(ASTNode):
     Метод evaluate должен найти в scope объект с именем name и вернуть его
     (см. подробнее про класс Scope).
     """
+
+    def accept(self, visitor: ASTNodeVisitor):
+        visitor.visit_reference(self)
 
     def __init__(self, name):
         self.name = name
@@ -224,6 +296,9 @@ class BinaryOperation(ASTNode):
     Гарантируется, что lhs и rhs при вычислении дадут объект типа Number,
     т.е. не может получиться так, что вам придется сравнивать две функции.
     """
+
+    def accept(self, visitor: ASTNodeVisitor):
+        visitor.visit_binary_operation(self)
 
     OP_TO_FUN = {'+': lambda a, b: a + b,
                  '-': lambda a, b: a - b,
@@ -263,6 +338,9 @@ class UnaryOperation(ASTNode):
     Как и для BinaryOperation, Number, хранящий 0, считаем за False, а все
     остальные за True.
     """
+
+    def accept(self, visitor: ASTNodeVisitor):
+        visitor.visit_unary_operation(self)
 
     OP_TO_FUN = {'-': lambda a: -a,
                  '!': lambda a: not a}
