@@ -7,7 +7,7 @@ class PrettyPrinter(model.ASTNodeVisitor):
         Представляет команду языка Ять в виде строки.
     """
 
-    def visit(self, node: model.ASTNode, is_statement):
+    def visit(self, node: model.ASTNode, is_statement=True):
         res = node.accept(self)
         return res + (';' if is_statement and not res.endswith('}') else '')
 
