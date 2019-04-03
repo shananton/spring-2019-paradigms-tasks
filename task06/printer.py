@@ -1,5 +1,8 @@
 import model
-from textwrap import dedent
+
+
+def indent_line(line):
+    return '\t{}\n'.format(line)
 
 
 class PrettyPrinter(model.ASTNodeVisitor):
@@ -20,32 +23,21 @@ class PrettyPrinter(model.ASTNodeVisitor):
 
     def visit_function_definition(self,
                                   fun_definition: model.FunctionDefinition):
-        return dedent('''\
-        def {name}({args}) {{
-            {body}
-        }}\
-        ''') \
-            .format(
+        return 'def {name}({args}) {{\n{body}}}'.format(
             name=fun_definition.name,
             args=', '.join(fun_definition.function.args),
-            body='\n'.join(
-                self.visit(stmt, True) for stmt
+            body=''.join(
+                indent_line(self.visit(stmt, True)) for stmt
                 in fun_definition.function.body))
 
     def visit_conditional(self, conditional: model.Conditional):
-        return dedent('''\
-        if ({cond}) {{
-            {if_true}
-        {else_header}   {if_false}
-        }}\
-        ''') \
-            .format(
+        return 'if ({cond}) {{\n{if_true}{else_header}{if_false}}}'.format(
             cond=self.visit(conditional.condition, False),
-            if_true='\n'.join(self.visit(stmt, True) for stmt
-                              in (conditional.if_true or [])),
-            else_header='}} else {{\n' if conditional.if_false else '',
-            if_false='\n'.join(self.visit(stmt, True) for stmt
-                               in (conditional.if_false or [])))
+            if_true=''.join(indent_line(self.visit(stmt, True)) for stmt
+                            in (conditional.if_true or [])),
+            else_header='} else {\n' if conditional.if_false else '',
+            if_false=''.join(indent_line(self.visit(stmt, True)) for stmt
+                             in (conditional.if_false or [])))
 
     def visit_print(self, print_cmd: model.Print):
         return 'print {expr}'.format(expr=self.visit(print_cmd.expr, False))
