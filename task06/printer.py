@@ -74,3 +74,7 @@ class PrettyPrinter(model.ASTNodeVisitor):
             op=un_operation.op,
             expr=self.visit(un_operation.expr, False)
         )
+
+
+def pretty_print(node: model.ASTNode):
+    print(PrettyPrinter().visit(node))
