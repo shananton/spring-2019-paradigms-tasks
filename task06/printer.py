@@ -22,71 +22,71 @@ class PrettyPrinter(model.ASTNodeVisitor):
                 self.append(';')
             self.append('\n')
 
-    def visit_number(self, node):
-        self.append(str(node.value))
+    def visit_number(self, number):
+        self.append(str(number.value))
 
-    def visit_function(self, node):
+    def visit_function(self, function):
         raise NotImplementedError(
             'Functions cannot be present outside of a function definition')
 
-    def visit_function_definition(self, node):
+    def visit_function_definition(self, fun_definition):
         self.append('def {name}({args}) {\n'.format(
-            name=node.name,
-            args=', '.join(node.function.args)))
+            name=fun_definition.name,
+            args=', '.join(fun_definition.function.args)))
 
-        for stmt in node.function.body:
+        for stmt in fun_definition.function.body:
             self.visit(stmt, True)
 
         self.append('}\n')
 
-    def visit_conditional(self, node):
+    def visit_conditional(self, conditional):
         self.append('if (')
-        self.visit(node.condition, False)
+        self.visit(conditional.condition, False)
         self.append(') {\n')
 
-        if node.if_true:
-            for stmt in node.if_true:
+        if conditional.if_true:
+            for stmt in conditional.if_true:
                 self.visit(stmt, True)
-        if node.if_false:
+        if conditional.if_false:
             self.append('} else {\n')
-            for stmt in node.if_false:
+            for stmt in conditional.if_false:
                 self.visit(stmt, True)
 
         self.append('}')
 
-    def visit_print(self, node):
+    def visit_print(self, print_cmd):
         self.append('print ')
-        self.visit(node.expr, False)
+        self.visit(print_cmd.expr, False)
 
-    def visit_read(self, node):
-        self.append('read {name}'.format(name=node.name))
+    def visit_read(self, read_cmd):
+        self.append('read {name}'.format(name=read_cmd.name))
 
-    def visit_function_call(self, node):
-        self.visit(node.fun_expr, False)
+    def visit_function_call(self, fun_call):
+        self.visit(fun_call.fun_expr, False)
         self.append('(')
-        for i, expr in enumerate(node.args):
+        for i, expr in enumerate(fun_call.args):
             if i > 0:
                 self.append(', ')
             self.visit(expr, False)
         self.append(')')
 
-    def visit_reference(self, node):
-        self.append(node.name)
+    def visit_reference(self, reference):
+        self.append(reference.name)
 
-    def visit_binary_operation(self, node):
+    def visit_binary_operation(self, bin_operation):
         self.append('(')
-        self.visit(node.lhs, False)
+        self.visit(bin_operation.lhs, False)
         self.append(')')
 
-        self.append(' {} '.format(node.op))
+        self.append(' {} '.format(bin_operation.op))
 
         self.append('(')
-        self.visit(node.rhs, False)
+        self.visit(bin_operation.rhs, False)
         self.append(')')
 
-    def visit_unary_operation(self, node):
-        self.append(node.op)
+    def visit_unary_operation(self, un_operation):
+        self.append(un_operation.op)
 
         self.append('(')
-        self.visit(node.expr, False)
+        self.visit(un_operation.expr, False)
         self.append(')')
