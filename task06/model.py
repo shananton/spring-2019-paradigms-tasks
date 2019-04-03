@@ -21,43 +21,43 @@ class Scope:
 
 class ASTNodeVisitor(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def visit_number(self, number):
+    def visit_number(self, number: 'Number'):
         pass
 
     @abc.abstractmethod
-    def visit_function(self, function):
+    def visit_function(self, function: 'Function'):
         pass
 
     @abc.abstractmethod
-    def visit_function_definition(self, fun_definition):
+    def visit_function_definition(self, fun_definition: 'FunctionDefinition'):
         pass
 
     @abc.abstractmethod
-    def visit_conditional(self, conditional):
+    def visit_conditional(self, conditional: 'Conditional'):
         pass
 
     @abc.abstractmethod
-    def visit_print(self, print_cmd):
+    def visit_print(self, print_cmd: 'Print'):
         pass
 
     @abc.abstractmethod
-    def visit_read(self, read_cmd):
+    def visit_read(self, read_cmd: 'Read'):
         pass
 
     @abc.abstractmethod
-    def visit_function_call(self, fun_call):
+    def visit_function_call(self, fun_call: 'FunctionCall'):
         pass
 
     @abc.abstractmethod
-    def visit_reference(self, reference):
+    def visit_reference(self, reference: 'Reference'):
         pass
 
     @abc.abstractmethod
-    def visit_binary_operation(self, bin_operation):
+    def visit_binary_operation(self, bin_operation: 'BinaryOperation'):
         pass
 
     @abc.abstractmethod
-    def visit_unary_operation(self, un_operation):
+    def visit_unary_operation(self, un_operation: 'UnaryOperation'):
         pass
 
 
