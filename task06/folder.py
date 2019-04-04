@@ -57,3 +57,7 @@ class ConstantFolder(ASTNodeVisitor):
         if isinstance(res.expr, Number):
             return res.evaluate(Scope())
         return res
+
+
+def fold_constants(program):
+    return ConstantFolder().visit(program)
