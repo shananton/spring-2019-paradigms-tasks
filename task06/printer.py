@@ -1,12 +1,9 @@
 import model
-
-
-def indent_line(line):
-    return '\t{}\n'.format(line)
+from textwrap import indent
 
 
 def indent_statement(stmt):
-    return ''.join(map(indent_line, stmt.splitlines()))
+    return indent(stmt, '\t') + '\n'
 
 
 class PrettyPrinter(model.ASTNodeVisitor):
