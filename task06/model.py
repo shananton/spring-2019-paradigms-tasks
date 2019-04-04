@@ -75,6 +75,9 @@ class ASTNode(metaclass=abc.ABCMeta):
         Вызывает соответствующий метод visit_<type>(self) у посетителя.
         """
 
+    def __eq__(self, other):
+        return vars(self) == vars(other)
+
 
 class Number(ASTNode):
     """
