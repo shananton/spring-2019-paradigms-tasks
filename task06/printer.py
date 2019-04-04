@@ -5,6 +5,10 @@ def indent_line(line):
     return '\t{}\n'.format(line)
 
 
+def indent_statement(stmt):
+    return ''.join(map(indent_line, stmt.splitlines()))
+
+
 class PrettyPrinter(model.ASTNodeVisitor):
     """
         Представляет команду языка Ять в виде строки.
@@ -27,16 +31,16 @@ class PrettyPrinter(model.ASTNodeVisitor):
             name=fun_definition.name,
             args=', '.join(fun_definition.function.args),
             body=''.join(
-                indent_line(self.visit(stmt, True)) for stmt
+                indent_statement(self.visit(stmt, True)) for stmt
                 in fun_definition.function.body))
 
     def visit_conditional(self, conditional: model.Conditional):
         return 'if ({cond}) {{\n{if_true}{else_header}{if_false}}}'.format(
             cond=self.visit(conditional.condition, False),
-            if_true=''.join(indent_line(self.visit(stmt, True)) for stmt
+            if_true=''.join(indent_statement(self.visit(stmt, True)) for stmt
                             in (conditional.if_true or [])),
             else_header='} else {\n' if conditional.if_false else '',
-            if_false=''.join(indent_line(self.visit(stmt, True)) for stmt
+            if_false=''.join(indent_statement(self.visit(stmt, True)) for stmt
                              in (conditional.if_false or [])))
 
     def visit_print(self, print_cmd: model.Print):
