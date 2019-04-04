@@ -3,15 +3,17 @@ language: minimal
 dist: xenial
 
 cache: pip
-before_install:
-# Python 3.5 is the default python3 on Ubuntu Xenial
-- virtualenv --python=python3.5 .py35
-- source .py35/bin/activate
-- python --version
 install:
+- sudo add-apt-repository ppa:deadsnakes/ppa -y # python3.7 is unavailable in Xenial
+- sudo apt-get update
+- sudo apt-get install python3.7
+- virtualenv --python=python3.7 .py37
+- source .py37/bin/activate
+- python --version
 - pip install -r requirements.txt -r requirements-dev.txt
 script:
 - find task?? -iname '*.py' | xargs pycodestyle --show-source
+- find task?? -iname '*.py' -not -iname 'test_*.py' | xargs -n 1 mypy
 - pytest task02
 - pytest task03
 - pytest task04
