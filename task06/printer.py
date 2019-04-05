@@ -60,7 +60,8 @@ class PrettyPrinter(model.ASTNodeVisitor):
     def visit_function_call(self, fun_call: model.FunctionCall):
         return '{fun_expr}({args})'.format(
             fun_expr=self.apply(fun_call.fun_expr, is_statement=False),
-            args=', '.join(self.apply(expr, is_statement=False) for expr in fun_call.args)
+            args=', '.join(self.apply(expr, is_statement=False) for expr
+                           in fun_call.args)
         )
 
     def visit_reference(self, reference: model.Reference):
