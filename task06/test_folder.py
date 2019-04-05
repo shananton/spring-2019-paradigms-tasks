@@ -3,6 +3,15 @@ from model import *
 from folder import *
 
 
+def type_and_vars_eq(self, other):
+    return type(self) == type(other) and vars(self) == vars(other)
+
+
+@pytest.fixture(scope='function', autouse=True)
+def mock_eq_method(monkeypatch):
+    monkeypatch.setattr(ASTNode, '__eq__', type_and_vars_eq)
+
+
 def test_number_op_number():
     assert (fold_constants(BinaryOperation(Number(6), '*', Number(7)))
             == Number(42))
