@@ -11,7 +11,7 @@ class PrettyPrinter(model.ASTNodeVisitor):
         Представляет команду языка Ять в виде строки.
     """
 
-    def visit(self, node: model.ASTNode, is_statement=True):
+    def apply(self, node: model.ASTNode, *, is_statement=True):
         res = node.accept(self)
         return res + (';' if is_statement and not res.endswith('}') else '')
 
@@ -28,28 +28,29 @@ class PrettyPrinter(model.ASTNodeVisitor):
             name=fun_definition.name,
             args=', '.join(fun_definition.function.args),
             body=''.join(
-                indent_statement(self.visit(stmt, True)) for stmt
+                indent_statement(self.apply(stmt)) for stmt
                 in fun_definition.function.body))
 
     def visit_conditional(self, conditional: model.Conditional):
         return 'if ({cond}) {{\n{if_true}{else_header}{if_false}}}'.format(
-            cond=self.visit(conditional.condition, False),
-            if_true=''.join(indent_statement(self.visit(stmt, True)) for stmt
+            cond=self.apply(conditional.condition, is_statement=False),
+            if_true=''.join(indent_statement(self.apply(stmt)) for stmt
                             in (conditional.if_true or [])),
             else_header='} else {\n' if conditional.if_false else '',
-            if_false=''.join(indent_statement(self.visit(stmt, True)) for stmt
+            if_false=''.join(indent_statement(self.apply(stmt)) for stmt
                              in (conditional.if_false or [])))
 
     def visit_print(self, print_cmd: model.Print):
-        return 'print {expr}'.format(expr=self.visit(print_cmd.expr, False))
+        return 'print {expr}' \
+            .format(expr=self.apply(print_cmd.expr, is_statement=False))
 
     def visit_read(self, read_cmd: model.Read):
         return 'read {name}'.format(name=read_cmd.name)
 
     def visit_function_call(self, fun_call: model.FunctionCall):
         return '{fun_expr}({args})'.format(
-            fun_expr=self.visit(fun_call.fun_expr, False),
-            args=', '.join(self.visit(expr, False) for expr in fun_call.args)
+            fun_expr=self.apply(fun_call.fun_expr, is_statement=False),
+            args=', '.join(self.apply(expr, is_statement=False) for expr in fun_call.args)
         )
 
     def visit_reference(self, reference: model.Reference):
@@ -57,17 +58,17 @@ class PrettyPrinter(model.ASTNodeVisitor):
 
     def visit_binary_operation(self, bin_operation: model.BinaryOperation):
         return '({lhs}) {op} ({rhs})'.format(
-            lhs=self.visit(bin_operation.lhs, False),
+            lhs=self.apply(bin_operation.lhs, is_statement=False),
             op=bin_operation.op,
-            rhs=self.visit(bin_operation.rhs, False)
+            rhs=self.apply(bin_operation.rhs, is_statement=False)
         )
 
     def visit_unary_operation(self, un_operation: model.UnaryOperation):
         return '{op}({expr})'.format(
             op=un_operation.op,
-            expr=self.visit(un_operation.expr, False)
+            expr=self.apply(un_operation.expr, is_statement=False)
         )
 
 
 def pretty_print(node: model.ASTNode):
-    print(PrettyPrinter().visit(node))
+    print(PrettyPrinter().apply(node))
