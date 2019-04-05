@@ -6,14 +6,24 @@ def indent_statement(stmt):
     return indent(stmt, '\t') + '\n'
 
 
+def format_statement(stmt):
+    if stmt.endswith('}'):
+        return stmt
+    else:
+        return stmt + ';'
+
+
 class PrettyPrinter(model.ASTNodeVisitor):
     """
         Представляет команду языка Ять в виде строки.
     """
 
+    def visit(self, node: model.ASTNode):
+        return node.accept(self)
+
     def apply(self, node: model.ASTNode, *, is_statement=True):
-        res = node.accept(self)
-        return res + (';' if is_statement and not res.endswith('}') else '')
+        res = self.visit(node)
+        return format_statement(res) if is_statement else res
 
     def visit_number(self, number: model.Number):
         return str(number.value)
