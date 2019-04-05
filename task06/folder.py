@@ -43,13 +43,12 @@ class ConstantFolder(md.ASTNodeVisitor):
         if isinstance(res.lhs, md.Number) and isinstance(res.rhs, md.Number):
             return res.evaluate(md.Scope())
 
-        if (res.op == '*' and
-                (res.lhs == md.Number(0) and
-                 isinstance(res.rhs, md.Reference)
-                 or
-                 res.rhs == md.Number(0) and
-                 isinstance(res.lhs, md.Reference))):
-            return md.Number(0)
+        if res.op == '*':
+            for arg1, arg2 in ((res.lhs, res.rhs), (res.rhs, res.lhs)):
+                if (isinstance(arg1, md.Number) and
+                        arg1 == md.Number(0) and
+                        isinstance(arg2, md.Reference)):
+                    return md.Number(0)
 
         if (res.op == '-' and
                 isinstance(res.lhs, md.Reference) and
@@ -60,6 +59,7 @@ class ConstantFolder(md.ASTNodeVisitor):
         return res
 
     def visit_unary_operation(self, un_operation: md.UnaryOperation):
+
         res = md.UnaryOperation(un_operation.op, self.visit(un_operation.expr))
         if isinstance(res.expr, md.Number):
             return res.evaluate(md.Scope())
