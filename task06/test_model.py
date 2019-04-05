@@ -148,6 +148,7 @@ def test_factorial():
                         Number(1)
                     ],
                     [
+
                         BinaryOperation(
                             Reference('n'),
                             '*',
@@ -165,6 +166,32 @@ def test_factorial():
     factorial_def.evaluate(scope)
     assert FunctionCall(Reference('fac'),
                         [Number(5)]).evaluate(scope) == Number(120)
+
+
+def test_construction():
+    FunctionDefinition('fac', Function(['n'], [
+        Conditional(
+            BinaryOperation(Reference('n'), '==', Number(0)),
+            [Number(1)],
+            [
+                BinaryOperation(
+                    Reference('n'),
+                    '*',
+                    FunctionCall(Reference('fac'), [
+                        BinaryOperation(
+                            Reference('n'),
+                            '-',
+                            Number(1)
+                        )
+                    ])
+                )
+            ]
+        )
+    ]))
+    Read('n')
+    Print(
+        UnaryOperation('-', FunctionCall(Reference('fac'), [Reference('n')]))
+    )
 
 
 if __name__ == "__main__":
