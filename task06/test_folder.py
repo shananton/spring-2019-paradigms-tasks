@@ -12,7 +12,7 @@ def mock_eq_method(monkeypatch):
     monkeypatch.setattr(ASTNode, '__eq__', type_and_vars_eq)
 
 
-def test_number_op_number():
+def test_bin_op_numbers():
     assert (fold_constants(BinaryOperation(Number(6), '*', Number(7)))
             == Number(42))
     assert (fold_constants(BinaryOperation(Number(13), '%', Number(5)))
