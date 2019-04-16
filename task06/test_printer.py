@@ -5,14 +5,14 @@ from textwrap import dedent
 
 
 def test_conditional_from_readme():
-    assert (PrettyPrinter().apply(Conditional(Number(42), [], []))
+    assert (PrettyPrinter().visit_statement(Conditional(Number(42), [], []))
             == dedent('''\
                 if (42) {
                 }'''))
 
 
 def test_conditional_only_true():
-    assert (PrettyPrinter().apply(
+    assert (PrettyPrinter().visit_statement(
         Conditional(Number(42), [Number(123), Number(456)], None))
             == dedent('''\
             if (42) {
@@ -22,7 +22,7 @@ def test_conditional_only_true():
 
 
 def test_conditional_both():
-    assert (PrettyPrinter().apply(
+    assert (PrettyPrinter().visit_statement(
         Conditional(Number(42), [Number(123)], [Number(456), Number(789)]))
             == dedent('''\
             if (42) {
@@ -34,14 +34,14 @@ def test_conditional_both():
 
 
 def test_function_definition_from_readme():
-    assert (PrettyPrinter().apply(FunctionDefinition('foo', Function([], [])))
+    assert (PrettyPrinter().visit_statement(FunctionDefinition('foo', Function([], [])))
             == dedent('''\
             def foo() {
             }'''))
 
 
 def test_function_definition_with_arguments_and_body():
-    assert (PrettyPrinter().apply(
+    assert (PrettyPrinter().visit_statement(
         FunctionDefinition('bar',
                            Function(['fst', 'snd'],
                                     [Number(42), Number(123)])))
@@ -53,33 +53,33 @@ def test_function_definition_with_arguments_and_body():
 
 
 def test_print_from_readme():
-    assert (PrettyPrinter().apply(Print(Number(42))) == 'print 42;')
+    assert (PrettyPrinter().visit_statement(Print(Number(42))) == 'print 42;')
 
 
 def test_read_from_readme():
-    assert (PrettyPrinter().apply(Read('x')) == 'read x;')
+    assert (PrettyPrinter().visit_statement(Read('x')) == 'read x;')
 
 
 def test_number_from_readme():
-    assert (PrettyPrinter().apply(Number(10)) == '10;')
+    assert (PrettyPrinter().visit_statement(Number(10)) == '10;')
 
 
 def test_reference_from_readme():
-    assert (PrettyPrinter().apply(Reference('x')) == 'x;')
+    assert (PrettyPrinter().visit_statement(Reference('x')) == 'x;')
 
 
 def test_binary_operation_from_readme():
     add = BinaryOperation(Number(2), '+', Number(3))
     mul = BinaryOperation(Number(1), '*', add)
-    assert (PrettyPrinter().apply(mul) == '(1) * ((2) + (3));')
+    assert (PrettyPrinter().visit_statement(mul) == '(1) * ((2) + (3));')
 
 
 def test_unary_operation_from_readme():
-    assert (PrettyPrinter().apply(UnaryOperation('-', Number(42))) == '-(42);')
+    assert (PrettyPrinter().visit_statement(UnaryOperation('-', Number(42))) == '-(42);')
 
 
 def test_function_call_from_readme():
-    assert (PrettyPrinter().apply(
+    assert (PrettyPrinter().visit_statement(
         FunctionCall(Reference('foo'), [Number(1), Number(2), Number(3)]))
             == 'foo(1, 2, 3);')
 
