@@ -25,7 +25,8 @@ class PrettyPrinter(model.ASTNodeVisitor):
         return format_statement(self.visit(node))
 
     def visit_stmt_sequence(self, seq):
-        return ''.join(indent_statement(self.visit_statement(stmt)) + '\n' for stmt in seq)
+        return ''.join(indent_statement(self.visit_statement(stmt)) + '\n'
+                       for stmt in seq)
 
     def visit_number(self, number: model.Number):
         return str(number.value)

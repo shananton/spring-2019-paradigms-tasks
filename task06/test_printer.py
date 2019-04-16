@@ -34,7 +34,8 @@ def test_conditional_both():
 
 
 def test_function_definition_from_readme():
-    assert (PrettyPrinter().visit_statement(FunctionDefinition('foo', Function([], [])))
+    assert (PrettyPrinter().visit_statement(
+        FunctionDefinition('foo', Function([], [])))
             == dedent('''\
             def foo() {
             }'''))
@@ -75,7 +76,8 @@ def test_binary_operation_from_readme():
 
 
 def test_unary_operation_from_readme():
-    assert (PrettyPrinter().visit_statement(UnaryOperation('-', Number(42))) == '-(42);')
+    assert (PrettyPrinter().visit_statement(UnaryOperation('-', Number(42)))
+            == '-(42);')
 
 
 def test_function_call_from_readme():
