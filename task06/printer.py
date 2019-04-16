@@ -6,7 +6,7 @@ def indent_statement(stmt):
     return indent(stmt, '\t')
 
 
-def format_statement(stmt):
+def terminate_statement(stmt):
     if stmt.endswith('}'):
         return stmt
     else:
@@ -22,7 +22,7 @@ class PrettyPrinter(model.ASTNodeVisitor):
         return node.accept(self)
 
     def visit_statement(self, node: model.ASTNode):
-        return format_statement(self.visit(node))
+        return terminate_statement(self.visit(node))
 
     def visit_stmt_sequence(self, seq):
         return ''.join(indent_statement(self.visit_statement(stmt)) + '\n'
