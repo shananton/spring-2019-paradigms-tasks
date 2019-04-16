@@ -25,8 +25,10 @@ class PrettyPrinter(model.ASTNodeVisitor):
         return terminate_statement(self.visit(node))
 
     def visit_block(self, block):
-        return ''.join(indent_statement(self.visit_statement(stmt)) + '\n'
-                       for stmt in block)
+        return ('{\n' +
+                ''.join(indent_statement(self.visit_statement(stmt)) + '\n'
+                        for stmt in block) +
+                '}')
 
     def visit_number(self, number: model.Number):
         return str(number.value)
@@ -37,17 +39,21 @@ class PrettyPrinter(model.ASTNodeVisitor):
 
     def visit_function_definition(self,
                                   fun_definition: model.FunctionDefinition):
-        return 'def {name}({args}) {{\n{body}}}'.format(
+        return 'def {name}({args}) {body}'.format(
             name=fun_definition.name,
             args=', '.join(fun_definition.function.args),
             body=self.visit_block(fun_definition.function.body))
 
     def visit_conditional(self, conditional: model.Conditional):
-        return 'if ({cond}) {{\n{if_true}{else_header}{if_false}}}'.format(
-            cond=self.visit(conditional.condition),
-            if_true=self.visit_block(conditional.if_true or []),
-            else_header='} else {\n' if conditional.if_false else '',
-            if_false=self.visit_block(conditional.if_false or []))
+        if conditional.if_false:
+            return 'if ({cond}) {if_true} else {if_false}'.format(
+                cond=self.visit(conditional.condition),
+                if_true=self.visit_block(conditional.if_true or []),
+                if_false=self.visit_block(conditional.if_false or []))
+        else:
+            return 'if ({cond}) {if_true}'.format(
+                cond=self.visit(conditional.condition),
+                if_true=self.visit_block(conditional.if_true or []))
 
     def visit_print(self, print_cmd: model.Print):
         return 'print {}'.format(self.visit(print_cmd.expr))
