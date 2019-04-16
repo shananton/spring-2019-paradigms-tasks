@@ -28,7 +28,7 @@ class PrettyPrinter(model.ASTNodeVisitor):
         return str(number.value)
 
     def visit_function(self, function: model.Function):
-        raise NotImplementedError(
+        raise TypeError(
             'Functions cannot be present outside of a function definition')
 
     def visit_function_definition(self,
