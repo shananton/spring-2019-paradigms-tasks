@@ -50,11 +50,10 @@ class PrettyPrinter(model.ASTNodeVisitor):
                              in (conditional.if_false or [])))
 
     def visit_print(self, print_cmd: model.Print):
-        return 'print {expr}' \
-            .format(expr=self.visit(print_cmd.expr))
+        return 'print {}'.format(self.visit(print_cmd.expr))
 
     def visit_read(self, read_cmd: model.Read):
-        return 'read {name}'.format(name=read_cmd.name)
+        return 'read {}'.format(read_cmd.name)
 
     def visit_function_call(self, fun_call: model.FunctionCall):
         return '{fun_expr}({args})'.format(
