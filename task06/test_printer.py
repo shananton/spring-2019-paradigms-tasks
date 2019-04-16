@@ -102,6 +102,7 @@ def test_end_to_end_from_readme(capsys):
             ],
         ),
     ])))
+
     expected_result = dedent('''\
     def main(arg1) {
     \tread x;
