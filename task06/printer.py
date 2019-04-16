@@ -24,9 +24,9 @@ class PrettyPrinter(model.ASTNodeVisitor):
     def visit_statement(self, node: model.ASTNode):
         return terminate_statement(self.visit(node))
 
-    def visit_stmt_sequence(self, seq):
+    def visit_block(self, block):
         return ''.join(indent_statement(self.visit_statement(stmt)) + '\n'
-                       for stmt in seq)
+                       for stmt in block)
 
     def visit_number(self, number: model.Number):
         return str(number.value)
@@ -40,14 +40,14 @@ class PrettyPrinter(model.ASTNodeVisitor):
         return 'def {name}({args}) {{\n{body}}}'.format(
             name=fun_definition.name,
             args=', '.join(fun_definition.function.args),
-            body=self.visit_stmt_sequence(fun_definition.function.body))
+            body=self.visit_block(fun_definition.function.body))
 
     def visit_conditional(self, conditional: model.Conditional):
         return 'if ({cond}) {{\n{if_true}{else_header}{if_false}}}'.format(
             cond=self.visit(conditional.condition),
-            if_true=self.visit_stmt_sequence(conditional.if_true or []),
+            if_true=self.visit_block(conditional.if_true or []),
             else_header='} else {\n' if conditional.if_false else '',
-            if_false=self.visit_stmt_sequence(conditional.if_false or []))
+            if_false=self.visit_block(conditional.if_false or []))
 
     def visit_print(self, print_cmd: model.Print):
         return 'print {}'.format(self.visit(print_cmd.expr))
