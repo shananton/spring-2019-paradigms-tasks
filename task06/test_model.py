@@ -148,7 +148,6 @@ def test_factorial():
                         Number(1)
                     ],
                     [
-
                         BinaryOperation(
                             Reference('n'),
                             '*',
