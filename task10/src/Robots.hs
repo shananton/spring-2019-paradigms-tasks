@@ -118,4 +118,4 @@ neueRobotAttak = fight neueRobot
 -- Наконец, используя filter определите, кто из роботов, которых вы положили в список roboter,
 -- выживет, если neueRobot сразится с ним в одном раунде.
 survivors :: [Robot]
-survivors = filter (isAlive . neueRobotAttak) roboter
+survivors = filter isAlive $ map neueRobotAttak roboter
