@@ -15,7 +15,7 @@ type Robot = (Name, Attack, Health)
 
 -- Напишем конструктор для робота
 robot :: Name -> Attack -> Health -> Robot
-robot newName attack hp  = (newName, attack, hp)
+robot name attack hp  = (name, attack, hp)
 
 -- У объектов есть геттеры или аксессоры -- функции, которые
 -- позволяют нам получить доступ к состоянию объекта
