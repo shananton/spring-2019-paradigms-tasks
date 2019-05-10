@@ -167,29 +167,46 @@ fn find_solution(f: &mut Field) -> Option<Field> {
     try_extend_field(f, |f_solved| f_solved.clone(), find_solution)
 }
 
+const SPAWN_DEPTH: i32 = 1;
+
 fn spawn_tasks(
-    pool: &mut threadpool::ThreadPool,
+    pool: & threadpool::ThreadPool,
     sender: std::sync::mpsc::Sender<Option<Field>>,
-    mut f: &mut Field
+    mut f: &mut Field,
+    remaining_depth: i32,
 ) -> () {
-    try_extend_field(&mut f, |f_solved| f_solved.clone(), |f| {
-        let sender_clone = sender.clone();
-        let mut f_clone = f.clone();
-        pool.execute(move|| {
-            sender_clone.send(find_solution(&mut f_clone)).unwrap_or_default()
-        });
-        None
-    });
+    // try_extend_field(&mut f, |f_solved| f_solved.clone(), |f| {
+    //     let sender_clone = sender.clone();
+    //     let mut f_clone = f.clone();
+    //     pool.execute(move|| {
+    //         sender_clone.send(find_solution(&mut f_clone)).unwrap_or_default()
+    //     });
+    //     None
+    // });
+    if remaining_depth == 0 {
+        let sender = sender.clone();
+        let mut f = f.clone();
+        pool.execute(move || sender.send(find_solution(&mut f)).unwrap_or_default());
+    } else {
+        try_extend_field(
+            &mut f,
+            |f_solved| f_solved.clone(),
+            |f| {
+                spawn_tasks(pool, sender.clone(), f, remaining_depth - 1);
+                None
+            },
+        );
+    }
 }
 
 /// Перебирает все возможные решения головоломки, заданной параметром `f`, в несколько потоков.
 /// Если хотя бы одно решение `s` существует, возвращает `Some(s)`,
 /// в противном случае возвращает `None`.
 fn find_solution_parallel(mut f: Field) -> Option<Field> {
-    const N_WORKERS : usize = 8;
-    let mut worker_pool = threadpool::ThreadPool::new(N_WORKERS);
+    const N_WORKERS: usize = 8;
+    let worker_pool = threadpool::ThreadPool::new(N_WORKERS);
     let (sender, receiver) = std::sync::mpsc::channel();
-    spawn_tasks(&mut worker_pool, sender, &mut f);
+    spawn_tasks(&worker_pool, sender, &mut f, SPAWN_DEPTH);
     receiver.into_iter().find_map(std::convert::identity)
 }
 
