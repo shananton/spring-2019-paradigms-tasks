@@ -170,19 +170,11 @@ fn find_solution(f: &mut Field) -> Option<Field> {
 const SPAWN_DEPTH: i32 = 2;
 
 fn spawn_tasks(
-    pool: & threadpool::ThreadPool,
+    pool: &threadpool::ThreadPool,
     sender: std::sync::mpsc::Sender<Option<Field>>,
     mut f: &mut Field,
     remaining_depth: i32,
 ) -> () {
-    // try_extend_field(&mut f, |f_solved| f_solved.clone(), |f| {
-    //     let sender_clone = sender.clone();
-    //     let mut f_clone = f.clone();
-    //     pool.execute(move|| {
-    //         sender_clone.send(find_solution(&mut f_clone)).unwrap_or_default()
-    //     });
-    //     None
-    // });
     if remaining_depth == 0 {
         let sender = sender.clone();
         let mut f = f.clone();
