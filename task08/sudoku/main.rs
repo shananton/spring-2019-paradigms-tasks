@@ -167,7 +167,7 @@ fn find_solution(f: &mut Field) -> Option<Field> {
     try_extend_field(f, |f_solved| f_solved.clone(), find_solution)
 }
 
-const SPAWN_DEPTH: i32 = 1;
+const SPAWN_DEPTH: i32 = 2;
 
 fn spawn_tasks(
     pool: & threadpool::ThreadPool,
@@ -190,7 +190,7 @@ fn spawn_tasks(
     } else {
         try_extend_field(
             &mut f,
-            |f_solved| f_solved.clone(),
+            |f_solved| sender.send(Some(f_solved.clone())).unwrap_or_default(),
             |f| {
                 spawn_tasks(pool, sender.clone(), f, remaining_depth - 1);
                 None
