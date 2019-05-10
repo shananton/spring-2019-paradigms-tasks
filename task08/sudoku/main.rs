@@ -167,22 +167,29 @@ fn find_solution(f: &mut Field) -> Option<Field> {
     try_extend_field(f, |f_solved| f_solved.clone(), find_solution)
 }
 
+fn spawn_tasks(
+    pool: &mut threadpool::ThreadPool,
+    sender: std::sync::mpsc::Sender<Option<Field>>,
+    mut f: &mut Field
+) -> () {
+    try_extend_field(&mut f, |f_solved| f_solved.clone(), |f| {
+        let sender_clone = sender.clone();
+        let mut f_clone = f.clone();
+        pool.execute(move|| {
+            sender_clone.send(find_solution(&mut f_clone)).unwrap_or_default()
+        });
+        None
+    });
+}
+
 /// Перебирает все возможные решения головоломки, заданной параметром `f`, в несколько потоков.
 /// Если хотя бы одно решение `s` существует, возвращает `Some(s)`,
 /// в противном случае возвращает `None`.
 fn find_solution_parallel(mut f: Field) -> Option<Field> {
     let n_workers = 8;
-    let worker_pool = threadpool::ThreadPool::new(n_workers);
+    let mut worker_pool = threadpool::ThreadPool::new(n_workers);
     let (sender, receiver) = std::sync::mpsc::channel();
-    try_extend_field(&mut f, |f_solved| f_solved.clone(), |f| {
-        let sender_clone = sender.clone();
-        let mut f_clone = f.clone();
-        worker_pool.execute(move|| {
-            sender_clone.send(find_solution(&mut f_clone)).unwrap_or_default()
-        });
-        None
-    });
-    std::mem::drop(sender);
+    spawn_tasks(&mut worker_pool, sender, &mut f);
     receiver.into_iter().find_map(std::convert::identity)
 }
 
