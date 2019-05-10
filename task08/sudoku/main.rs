@@ -186,8 +186,8 @@ fn spawn_tasks(
 /// Если хотя бы одно решение `s` существует, возвращает `Some(s)`,
 /// в противном случае возвращает `None`.
 fn find_solution_parallel(mut f: Field) -> Option<Field> {
-    let n_workers = 8;
-    let mut worker_pool = threadpool::ThreadPool::new(n_workers);
+    const N_WORKERS : usize = 8;
+    let mut worker_pool = threadpool::ThreadPool::new(N_WORKERS);
     let (sender, receiver) = std::sync::mpsc::channel();
     spawn_tasks(&mut worker_pool, sender, &mut f);
     receiver.into_iter().find_map(std::convert::identity)
