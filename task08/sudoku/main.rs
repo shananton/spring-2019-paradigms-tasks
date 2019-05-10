@@ -174,9 +174,15 @@ fn find_solution_parallel(mut f: Field) -> Option<Field> {
     let n_workers = 8;
     let worker_pool = threadpool::ThreadPool::new(n_workers);
     let (sender, receiver) = std::sync::mpsc::channel();
-    worker_pool.execute(move|| {
-        sender.send(find_solution(&mut f)).unwrap()
+    try_extend_field(&mut f, |f_solved| f_solved.clone(), |f| {
+        let sender_clone = sender.clone();
+        let mut f_clone = f.clone();
+        worker_pool.execute(move|| {
+            sender_clone.send(find_solution(&mut f_clone)).unwrap_or_default()
+        });
+        None
     });
+    std::mem::drop(sender);
     receiver.into_iter().find_map(std::convert::identity)
 }
 
