@@ -177,7 +177,7 @@ fn find_solution_parallel(mut f: Field) -> Option<Field> {
     worker_pool.execute(move|| {
         sender.send(find_solution(&mut f)).unwrap()
     });
-    receiver.recv().unwrap()
+    receiver.into_iter().find_map(std::convert::identity)
 }
 
 /// Юнит-тест, проверяющий, что `find_solution()` находит лексикографически минимальное решение на пустом поле.
