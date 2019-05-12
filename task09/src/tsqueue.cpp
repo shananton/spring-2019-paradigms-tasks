@@ -2,8 +2,8 @@
 
 void threadsafe_queue_init(ThreadsafeQueue *q) {
     queue_init(&q->q);
-    pthread_mutex_init(&q->m, NULL);  
-    pthread_cond_init(&q->cond, NULL);  
+    pthread_mutex_init(&q->m, NULL);
+    pthread_cond_init(&q->cond, NULL);
 }
 
 void threadsafe_queue_destroy(ThreadsafeQueue *q) {
