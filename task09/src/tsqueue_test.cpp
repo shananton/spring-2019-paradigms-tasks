@@ -48,7 +48,7 @@ TEST_CASE("ThreadsafeQueue multithreaded ping-pong") {
             threadsafe_queue_push(&qs[0], &var);
             ++expected;
             void *ptr = threadsafe_queue_wait_and_pop(&qs[1]);
-            REQUIRE(ptr == &var);
+            CHECK(ptr == &var);
             CHECK(var == expected);
         }
         return nullptr;
