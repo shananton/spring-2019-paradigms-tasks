@@ -2,7 +2,7 @@
   Определение класса типов 'Map'.
 -}
 module Map where
-import Data.Maybe (isJust)
+import Data.Maybe(isJust)
 
 {-|
   Поведение всех определённых здесь функций должно быть аналогично

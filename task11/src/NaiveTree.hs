@@ -52,14 +52,14 @@ instance Map NaiveTree where
     toAscList Nil            = []
     toAscList (Node k a l r) = toAscList l ++ ((k, a) : toAscList r)   
 
-    alter f key Nil = case f Nothing of
-                        Just a -> singleton key a
-                        _      -> empty
-    alter f key (Node k a l r) | key < k   = alter f key l
-                               | key > k   = alter f key r
+    alter f key Nil                        = case f Nothing of
+                                                 Just a -> singleton key a
+                                                 _      -> empty
+    alter f key (Node k a l r) | key < k   = Node k a (alter f key l) r
+                               | key > k   = Node k a l (alter f key r)
                                | otherwise = case f $ Just a of
-                                               Just a' -> Node k a' l r 
-                                               _       -> merge l r
+                                                 Just a' -> Node k a' l r 
+                                                 _       -> merge l r
 
     lookup _   Nil                        = Nothing
     lookup key (Node k a l r) | key < k   = Map.lookup key l
