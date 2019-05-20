@@ -4,5 +4,5 @@
 -- население, население страны). (0,5 баллов)
 SELECT City.Name, City.Population, Country.Population FROM City
 JOIN Country ON City.CountryCode = Country.Code
-ORDER BY (City.Population / Country.Population) DESC, City.Name DESC
+ORDER BY ROUND(100 * City.Population / Country.Population) DESC, City.Name DESC
 LIMIT 20;
