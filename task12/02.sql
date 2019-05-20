@@ -3,6 +3,6 @@
 -- грамотности, именно в таком порядке и без лишних полей. (0,75 баллов)
 SELECT Country.Name, MAX(Rate) FROM Country
 JOIN (
-    SELECT *, MIN(Year) FROM LiteracyRate
+    SELECT CountryCode, Rate, MAX(Year) FROM LiteracyRate
     GROUP BY CountryCode
-) on Country.Code = CountryCode;
+) ON Country.Code = CountryCode;
